@@ -156,15 +156,15 @@ if(typeof _ == "undefined") {
 
   var toOmit = ['difference', 'bind', 'bindAll', 'memoize', 'delay', 'defer', 'extend', 'pick', 'omit', 'defaults', 'template', 'compose'];
 
-  var getTypeSig = function getTypeSig(key) {
+  var getTypeSig = function(key) {
     return configuration[key] ? configuration[key].sig : undefined;
   };
 
-  var getAlias = function getAlias(key) {
+  var getAlias = function(key) {
     return configuration[key] ? configuration[key].alias : undefined;
   };
 
-  var getFunction = function getFunction(key) {
+  var getAutoCurriedFunction = function(key) {
     var fun = _[key];
     return function() {
       var args = Array.prototype.slice.call(arguments)
@@ -175,18 +175,20 @@ if(typeof _ == "undefined") {
   };
 
   var decorateScoreUnderObject = function(key) {
-    var alias = getAlias(key)
-      , typeSig = alias ? getTypeSig(alias) : getTypeSig(key)
+    var not_a_function_in_underscore = typeof _[key] != "function"
+      , omit_from_auto_curry = _.contains(toOmit, key)
+      , alias = getAlias(key)
+      , type_sig = alias ? getTypeSig(alias) : getTypeSig(key)
       ;
 
-    if((typeof _[key] != "function") || _.contains(toOmit, key)) {
+    if(not_a_function_in_underscore || omit_from_auto_curry) {
       return __[key] = _[key];
     }
 
-    __[key] = getFunction(key);
+    __[key] = getAutoCurriedFunction(key);
     
-    if(typeSig) {
-      __[key] = __[key].typeCurry(typeSig);
+    if(type_sig) {
+      __[key] = __[key].typeCurry(type_sig);
     }
 
   };
