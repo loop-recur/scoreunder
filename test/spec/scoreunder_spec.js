@@ -21,8 +21,13 @@ describe("Scoreunder", function() {
     var total = 0
       , index = 0
       , keys = []
+      , origList = []
       , context = { multiplier: 5 }
-      , sum = function(x, i) { total += x; index = i; }
+      , sum = function(x, i, l) { 
+          total += x;
+          index = i;
+          origList.push(l[i]);
+        }
       , sumWithContext = function(x, i) { 
           total += (x * this.multiplier);
           index = i;
@@ -38,6 +43,13 @@ describe("Scoreunder", function() {
       total = 0;
       index = 0;
       keys = [];
+      origList = [];
+    })
+
+    it("is aliased as 'forEach'", function() {
+      _.forEach(sumWithContext, context, list);
+      expect(total).toEqual(50);
+      expect(index).toEqual(3);
     })
     
     it("iterates over a list, passes value and index to iterator", function() {
@@ -72,17 +84,22 @@ describe("Scoreunder", function() {
       delete obj.constructor.prototype.five;
     });
 
+    it("references the original collection from inside the iterator", function() {
+      _.each(sum, list);
+      expect(origList).toEqual(list);
+    });
+
+    it("handles a null properly", function() {
+      _.each(sum, null)
+      expect(total).toEqual(0);
+      expect(index).toEqual(0);
+    });
+
     it("can be partially applied", function() {
       _.each(sumObjWithContext)(context, obj);
       expect(total).toEqual(50);
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
     });
-
-    it("is aliased as 'forEach'", function() {
-      _.forEach(sumWithContext, context, list);
-      expect(total).toEqual(50);
-      expect(index).toEqual(3);
-    })
   });
 
   describe("select", function() {
@@ -90,12 +107,12 @@ describe("Scoreunder", function() {
       return !(n % 2);
     };
 
-    it("returns a filtered list", function() {
-      expect(_.select(isEven, list)).toEqual([2,4]);
-    });
-
     it("is aliased as 'filter'", function() {
       expect(_.filter(isEven, list)).toEqual(_.select(isEven, list));
+    });
+
+    it("returns a filtered list", function() {
+      expect(_.select(isEven, list)).toEqual([2,4]);
     });
 
     it("can be partially applied", function() {
