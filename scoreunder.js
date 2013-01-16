@@ -164,22 +164,26 @@ if(typeof _ == "undefined") {
     return configuration[key] ? configuration[key].alias : undefined;
   };
 
+  var getFunction = function getFunction(key) {
+    var fun = _[key];
+    return function() {
+      var args = Array.prototype.slice.call(arguments)
+        , s = args[args.length - 1]
+        , total = [s].concat(args.slice(0, -1));
+      return fun.apply(this, total);
+    }.autoCurry(fun.length);
+  };
+
   var decorateScoreUnderObject = function(key) {
-    var fun = _[key]
-      , alias = getAlias(key)
+    var alias = getAlias(key)
       , typeSig = alias ? getTypeSig(alias) : getTypeSig(key)
       ;
 
     if((typeof _[key] != "function") || _.contains(toOmit, key)) {
       return __[key] = _[key];
     }
-    
-    __[key] = function() {
-      var args = Array.prototype.slice.call(arguments)
-        , s = args[args.length-1];
-      var total = [s].concat(args.slice(0,-1));
-      return fun.apply(this, total);
-    }.autoCurry(fun.length);
+
+    __[key] = getFunction(key);
     
     if(typeSig) {
       __[key] = __[key].typeCurry(typeSig);
