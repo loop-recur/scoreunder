@@ -19,13 +19,31 @@ describe("Scoreunder", function() {
     
   });
 
-  describe("filter", function() {
+  describe("select", function() {
     var isEven = function(n) {
       return !(n % 2);
     };
 
     it("returns a filtered list", function() {
-      expect(_.filter(isEven, list)).toEqual([2,4,6,8]);
+      expect(_.select(isEven, list)).toEqual([2,4,6,8]);
+    });
+
+    it("is aliased as 'filter'", function() {
+      expect(_.filter(isEven, list)).toEqual(_.select(isEven, list));
+    });
+
+    it("can be partially applied", function() {
+      expect(_.select(isEven)(list)).toEqual([2,4,6,8]);
+    });
+  });
+
+  describe("filter", function() {
+    var isEven = function(n) {
+      return !(n % 2);
+    };
+
+    it("is aliased as 'select'", function() {
+      expect(_.select(isEven, list)).toEqual(_.filter(isEven, list));
     });
   });
 

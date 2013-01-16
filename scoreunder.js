@@ -127,7 +127,8 @@ if(typeof _ == "undefined") {
     'reduce':  {sig: ['function', 'd_', '[object]', 'array|object']},
     // 'reduceRight': {flip_index: 3, opt_context: true},
     // 'find': {opt_context: true},
-    'filter': {sig: ['function', '[object]', 'array|object']},
+    'select': {sig: ['function', '[object]', 'array|object']},
+    'filter': {alias: 'select'},
     // 'reject': {opt_context: true},
     // 'every': {opt_context: true},
     // 'some': {run_if_first_arg_is: 'array', opt_context: true},
@@ -136,7 +137,7 @@ if(typeof _ == "undefined") {
     // 'min': {run_if_first_arg_is: 'array', opt_context: true},
     // 'sortBy': {opt_context: true},
     // 'first': {run_if_first_arg_is: 'array', curry_length: 2},
-    'first': {sig: ['array']},
+    'first': {sig: ['[number]', 'array']},
     // 'initial' : {run_if_first_arg_is: 'array'},
     // 'last': {run_if_first_arg_is: 'array', curry_length: 2},
     // 'rest': {run_if_first_arg_is: 'array'},
@@ -156,12 +157,16 @@ if(typeof _ == "undefined") {
   var toOmit = ['difference', 'bind', 'bindAll', 'memoize', 'delay', 'defer', 'extend', 'pick', 'omit', 'defaults', 'template', 'compose'];
 
   var decorateScoreUnderObject = function(key) {
-    var underscore = _;
+    var fun = _[key]
+      , typeSig = configuration[key] ? configuration[key].sig : undefined
+      , alias = configuration[key] ? configuration[key].alias : undefined
+      , aliasTypeSig = configuration[alias] ? configuration[alias].sig : undefined
+      ;
+    
     if((typeof _[key] != "function") || _.contains(toOmit, key)) {
       return __[key] = _[key];
     }
     
-    var fun = _[key];
     __[key] = function(){
       var args = Array.prototype.slice.call(arguments)
         , s = args[args.length-1];
@@ -169,10 +174,13 @@ if(typeof _ == "undefined") {
       return fun.apply(this, total);
     }.autoCurry(fun.length);
     
-    if(configuration[key]) {
-      __[key] = __[key].typeCurry(configuration[key].sig);
+    if(typeSig) {
+      __[key] = __[key].typeCurry(typeSig);
+    } else if (alias) {
+      __[key] = __[key].typeCurry(aliasTypeSig);
     }
-  }
+
+  };
 
   for(key in _) { decorateScoreUnderObject(key) };
 
