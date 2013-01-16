@@ -69,6 +69,12 @@ describe("Scoreunder", function() {
       expect(total).toEqual(50);
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
     });
+
+    it("is aliased as 'forEach'", function() {
+      _.forEach(sumWithContext, context, list);
+      expect(total).toEqual(50);
+      expect(index).toEqual(3);
+    })
   });
 
   describe("select", function() {
