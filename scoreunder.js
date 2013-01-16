@@ -156,18 +156,25 @@ if(typeof _ == "undefined") {
 
   var toOmit = ['difference', 'bind', 'bindAll', 'memoize', 'delay', 'defer', 'extend', 'pick', 'omit', 'defaults', 'template', 'compose'];
 
+  var getTypeSig = function getTypeSig(key) {
+    return configuration[key] ? configuration[key].sig : undefined;
+  };
+
+  var getAlias = function getAlias(key) {
+    return configuration[key] ? configuration[key].alias : undefined;
+  };
+
   var decorateScoreUnderObject = function(key) {
     var fun = _[key]
-      , typeSig = configuration[key] ? configuration[key].sig : undefined
-      , alias = configuration[key] ? configuration[key].alias : undefined
-      , aliasTypeSig = configuration[alias] ? configuration[alias].sig : undefined
+      , alias = getAlias(key)
+      , typeSig = alias ? getTypeSig(alias) : getTypeSig(key)
       ;
-    
+
     if((typeof _[key] != "function") || _.contains(toOmit, key)) {
       return __[key] = _[key];
     }
     
-    __[key] = function(){
+    __[key] = function() {
       var args = Array.prototype.slice.call(arguments)
         , s = args[args.length-1];
       var total = [s].concat(args.slice(0,-1));
@@ -176,8 +183,6 @@ if(typeof _ == "undefined") {
     
     if(typeSig) {
       __[key] = __[key].typeCurry(typeSig);
-    } else if (alias) {
-      __[key] = __[key].typeCurry(aliasTypeSig);
     }
 
   };
