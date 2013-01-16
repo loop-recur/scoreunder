@@ -64,6 +64,14 @@ describe("Scoreunder", function() {
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
     });
 
+    it("iterates over an object, ignoring the object's prototype", function() {
+      obj.constructor.prototype.five = 5
+      _.each(sumObjWithContext, context, obj);
+      expect(total).toEqual(50);
+      expect(keys).toEqual(['one', 'two', 'three', 'four']);
+      delete obj.constructor.prototype.five;
+    });
+
     it("can be partially applied", function() {
       _.each(sumObjWithContext)(context, obj);
       expect(total).toEqual(50);
