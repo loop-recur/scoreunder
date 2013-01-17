@@ -123,7 +123,9 @@ if(typeof _ == "undefined") {
 
   var configuration = {
     'each': {sig: ['function', '[object]', 'array|object']},
+    'forEach': {alias: 'each'},
     'map' : {sig: ['function', '[object]', 'array|object']},
+    'collect': {alias: 'map'},
     'reduce':  {sig: ['function', 'd_', '[object]', 'array|object']},
     // 'reduceRight': {flip_index: 3, opt_context: true},
     // 'find': {opt_context: true},

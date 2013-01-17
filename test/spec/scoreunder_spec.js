@@ -102,6 +102,14 @@ describe("Scoreunder", function() {
     });
   });
 
+  describe("map", function() {
+    var add2 = function(x) { return x + 2; };
+
+    it("is aliased as 'collect'", function() {
+      expect(_.map(add2, list)).toEqual(_.collect(add2, list));
+    });
+  });
+
   describe("select", function() {
     var isEven = function(n) {
       return !(n % 2);
