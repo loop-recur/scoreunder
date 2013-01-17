@@ -1,6 +1,7 @@
 describe("Scoreunder", function() {
   var list = [1,2,3,4]
     , obj = { 'one': 1, 'two': 2, 'three': 3, 'four': 4 }
+    , context = { multiplier: 5 }
     ;
 
   it("curries and flips filter", function() {
@@ -22,7 +23,6 @@ describe("Scoreunder", function() {
       , index = 0
       , keys = []
       , origList = []
-      , context = { multiplier: 5 }
       , sum = function(x, i, l) { 
           total += x;
           index = i;
@@ -103,10 +103,24 @@ describe("Scoreunder", function() {
   });
 
   describe("map", function() {
-    var add2 = function(x) { return x + 2; };
+    var addIndex = function(x, i) { return x + i; }
+      , multiply = function(x, i) { return x * this.multiplier; }
+      ;
 
     it("is aliased as 'collect'", function() {
-      expect(_.map(add2, list)).toEqual(_.collect(add2, list));
+      expect(_.map(addIndex, list)).toEqual(_.collect(addIndex, list));
+    });
+
+    it("iterates over a list, passing a value and index to the iterator, and returns the new list", function() {
+      expect(_.map(addIndex, list)).toEqual([1, 3, 5, 7]);
+    });
+
+    it("iterates over a list, with an optional context, and returns the new list", function() {
+      expect(_.map(multiply, context, list)).toEqual([5, 10, 15, 20]);
+    });
+
+    it("handles a null properly", function() {
+      expect(_.map(addIndex, null)).toEqual([]);
     });
   });
 
