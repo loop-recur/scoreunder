@@ -122,6 +122,59 @@ describe("Scoreunder", function() {
     it("handles a null properly", function() {
       expect(_.map(addIndex, null)).toEqual([]);
     });
+
+    it("can be partially applied", function() {
+      expect(_.map(addIndex)(list)).toEqual([1, 3, 5, 7]);
+    });
+  });
+
+  describe("reduce", function() {
+    var sum = function(sum, num) { return sum + num; }
+      , sumWithContext = function(sum, num) { return sum + num * this.multiplier; }
+      ;
+
+    it("is aliased as 'inject'", function() {
+      expect(_.reduce(sum, 0, list)).toEqual(_.inject(sum, 0, list));
+    });
+
+    it("is aliased as 'foldl'", function() {
+      expect(_.reduce(sum, 0, list)).toEqual(_.foldl(sum, 0, list));
+    });
+
+    it("returns the sum of an array", function() {
+      expect(_.reduce(sum, 0, list)).toEqual(10);
+    });
+
+    it("returns the sum of an array, with an optional context", function() {
+      expect(_.reduce(sumWithContext, 0, context, list)).toEqual(50);
+    });
+
+    xit("has a default initial value of zero", function() {
+      expect(_.reduce(sum, list)).toEqual(10);
+    });
+
+    xit("handles a null (without initial value) properly", function() {
+      var err;
+      try { _.reduce(sum, 0, null); } 
+      catch (ex) { err = ex; }
+      expect(err instanceof TypeError).toEqual(true);
+    });
+
+    it("handles a null (with initial value) properly", function() {
+      expect(_.reduce(sum, 5, null)).toEqual(5);
+    });
+
+    xit("handles undefined as a special case", function() {
+      expect(_.reduce(sum, undefined, list)).toEqual(undefined);
+    });
+
+    xit("throws an error for empty arrays with no initial value", function() {
+      expect(_.reduce(sum, [])).toThrow();
+    });
+
+    it("can be partially applied", function() {
+      expect(_.reduce(sum)(0, list)).toEqual(10);
+    });
   });
 
   describe("select", function() {
