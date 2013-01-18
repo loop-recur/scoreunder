@@ -155,7 +155,7 @@ describe("Scoreunder", function() {
 
     xit("handles a null (without initial value) properly", function() {
       var err;
-      try { _.reduce(sum, 0, null); } 
+      try { _.reduce(sum, null); } 
       catch (ex) { err = ex; }
       expect(err instanceof TypeError).toEqual(true);
     });
@@ -174,6 +174,25 @@ describe("Scoreunder", function() {
 
     it("can be partially applied", function() {
       expect(_.reduce(sum)(0, list)).toEqual(10);
+    });
+  });
+
+  describe("reduceRight", function() {
+    var words = ['foo', 'bar', 'baz']
+      , wordsObj = {'foo': 'foo', 'bar': 'bar', 'baz': 'baz'}
+      , joinWords = function(memo, word) { return memo + word; }
+      ;
+
+    it("is aliased as 'foldr'", function() {
+      expect(_.reduceRight(joinWords, '', words)).toEqual(_.foldr(joinWords, '', words));
+    });
+
+    it("reduces a list from right to left", function() {
+      expect(_.reduceRight(joinWords, '', words)).toEqual('bazbarfoo');
+    });
+
+    it("handles a null (with initial value) properly", function() {
+      expect(_.reduceRight(joinWords, '', null)).toEqual('');
     });
   });
 
