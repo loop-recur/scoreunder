@@ -7,7 +7,7 @@ if(typeof _ == "undefined") {
 }
 
 
-(function() {
+;(function() {
   var __ = {}
 
     , root = this
@@ -31,7 +31,12 @@ if(typeof _ == "undefined") {
         'select': { sig: ['function', '[object]', 'array|object'] },
         'filter': { alias: 'select' },
         'reject': { sig: ['function', '[object]', 'array|object'] },
-        // 'every': {opt_context: true},
+
+        // TODO fix scoreunder to work with every()'s type sig.
+        // TODO enable specs for every() and all().
+        'every': { sig: ['function', 'array|object'] },
+        'all': { alias: 'every' },
+
         // 'some': {run_if_first_arg_is: 'array', opt_context: true},
         // 'invoke': {skip_flip: true, curry_length: 2},
         // 'max': {run_if_first_arg_is: 'array', opt_context: true},
@@ -249,6 +254,28 @@ if(typeof _ == "undefined") {
           __[key] = __[key].typeCurry(type_sig);
         }
       }
+
+  //+ exposeFunction :: f -> Bool
+    , exposeFunction = function(f) {
+        var omit = ['expose'];
+        return omit.indexOf(f) == -1 ? true : false;
+      }
+
+  //+ expose :: a -> IO
+    , expose = function(ns) {
+        var f;
+        ns = ns || root;
+        for (f in __) {
+          if (exposeFunction(f) && __.hasOwnProperty(f)) {
+            ns[f] = __[f];
+          }
+        }
+      }
+
+  //+ decorateScoreUnderWithExpose :: IO
+    , decorateScoreUnderWithExpose = (function() {
+        __['expose'] = expose;
+      })()
     ;
 
   for(key in _) { decorateScoreUnderObject(key) };

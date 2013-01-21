@@ -17,6 +17,35 @@ describe("Scoreunder", function() {
     var result = _.filter(isEven, list);
     expect(result).toEqual([2,4]);
   });
+
+  it("does not globally expose functions automatically", function() {
+    expect(window.map).toBeUndefined();
+  });
+
+  describe("expose", function() {
+    var add2 = function(x) { return x + 2; }
+      , cleanup = function() {
+          for (f in _) {
+            if (_.hasOwnProperty(f)) { 
+              delete window[f];
+            }
+          }
+        }
+      ;
+
+    beforeEach(_.expose);
+    afterEach(cleanup);
+
+    it("exposes all functions to the global namespace", function() {
+      expect(map).toBeDefined();
+      expect(window.map).toBeDefined();
+      expect(map(add2, list)).toEqual([3, 4, 5, 6]);
+    });
+
+    it("omits designated functions from exposure", function() {
+      expect(window.expose).toBeUndefined();
+    });
+  });
   
   describe("each", function() {
     var total = 0
@@ -330,6 +359,26 @@ describe("Scoreunder", function() {
     it("can be partially applied", function() {
       expect(_.reject(isEven)(list)).toEqual([1,3]);
       expect(_.reject(isEven)(obj)).toEqual([1,3]);
+    });
+  });
+
+  xdescribe("every", function() {
+    var notAString = function(x) { return typeof x != 'string'; };
+
+    it("is aliased as 'all'", function() {
+      expect(_.every(notAString, list)).toEqual(_.all(notAString, list));
+    });
+
+    it("returns true if all values in array pass truth test", function() {
+      expect(_.every(notAString, list)).toEqual(true);
+    });
+  });
+
+  xdescribe("all", function() {
+    var notAString = function(x) { return typeof x != 'string'; };
+
+    it("is aliased as 'every'", function() {
+      expect(_.all(notAString, list)).toEqual(_.every(notAString, list));
     });
   });
 
