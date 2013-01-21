@@ -104,6 +104,13 @@ describe("Scoreunder", function() {
 
   describe("map", function() {
     var addIndex = function(x, i) { return x + i; }
+      , addKey = function(val, key) { switch(key) {
+          case 'one': return val + 1; 
+          case 'two': return val + 2;
+          case 'three': return val + 3;
+          case 'four': return val + 4;
+          default: return val;
+        }}
       , multiply = function(x, i) { return x * this.multiplier; }
       ;
 
@@ -119,12 +126,29 @@ describe("Scoreunder", function() {
       expect(_.map(multiply, context, list)).toEqual([5, 10, 15, 20]);
     });
 
+    it("iterates over an object, passing value and key to the iterator, and returns a list", function() {
+      expect(_.map(addKey, obj)).toEqual([2, 4, 6, 8]);
+    });
+
+    it("iterates over an object, with an optional context, and returns a new list", function() {
+      expect(_.map(multiply, context, obj)).toEqual([5, 10, 15, 20]);
+    });
+
     it("handles a null properly", function() {
       expect(_.map(addIndex, null)).toEqual([]);
     });
 
     it("can be partially applied", function() {
       expect(_.map(addIndex)(list)).toEqual([1, 3, 5, 7]);
+      expect(_.map(multiply)(context, list)).toEqual([5,10,15,20]);
+      // TODO fix scoreunder to correctly partially apply an optional context
+      //expect(_.map(multiply)(context)(list)).toEqual([5,10,15,20]);
+      //expect(_.map(multiply, context)(list)).toEqual([5,10,15,20]);
+      expect(_.map(addKey)(obj)).toEqual([2, 4, 6, 8]);
+      expect(_.map(multiply)(context, obj)).toEqual([5,10,15,20]);
+      // TODO fix scoreunder to correctly partially apply an optional context
+      //expect(_.map(multiply, context)(obj)).toEqual([5,10,15,20]);
+      //expect(_.map(multiply)(context)(obj)).toEqual([5,10,15,20]);
     });
   });
 
@@ -141,7 +165,7 @@ describe("Scoreunder", function() {
       expect(_.reduce(sum, 0, list)).toEqual(_.foldl(sum, 0, list));
     });
 
-    it("returns the sum of an array", function() {
+    it("returns the sum of an array of numbers", function() {
       expect(_.reduce(sum, 0, list)).toEqual(10);
     });
 
@@ -149,8 +173,20 @@ describe("Scoreunder", function() {
       expect(_.reduce(sumWithContext, 0, context, list)).toEqual(50);
     });
 
-    xit("has a default initial value of zero", function() {
+    it("returns the sum of an object containing numbers", function() {
+      expect(_.reduce(sum, 0, obj)).toEqual(10);
+    });
+
+    it("returns the sum of an object containing numbers, with an optional context", function() {
+      expect(_.reduce(sumWithContext, 0, context, obj)).toEqual(50);
+    });
+
+    xit("has a default initial value of zero, for lists", function() {
       expect(_.reduce(sum, list)).toEqual(10);
+    });
+
+    xit("has a default inital value of zero, for objects", function() {
+      expect(_.reduce(sum, obj)).toEqual(10);
     });
 
     xit("handles a null (without initial value) properly", function() {
@@ -174,6 +210,11 @@ describe("Scoreunder", function() {
 
     it("can be partially applied", function() {
       expect(_.reduce(sum)(0, list)).toEqual(10);
+      expect(_.reduce(sum)(0)(list)).toEqual(10);
+      expect(_.reduce(sum, 0)(list)).toEqual(10);
+      expect(_.reduce(sum)(0, obj)).toEqual(10);
+      expect(_.reduce(sum)(0)(obj)).toEqual(10);
+      expect(_.reduce(sum, 0)(obj)).toEqual(10);
     });
   });
 
@@ -191,8 +232,54 @@ describe("Scoreunder", function() {
       expect(_.reduceRight(joinWords, '', words)).toEqual('bazbarfoo');
     });
 
+    it("reduces a object from right to left", function() {
+      expect(_.reduceRight(joinWords, '', wordsObj)).toEqual('bazbarfoo');
+    });
+
     it("handles a null (with initial value) properly", function() {
       expect(_.reduceRight(joinWords, '', null)).toEqual('');
+    });
+
+    it("can be partially applied", function() {
+      expect(_.reduceRight(joinWords)('', words)).toEqual('bazbarfoo');
+      expect(_.reduceRight(joinWords)('')(words)).toEqual('bazbarfoo');
+      expect(_.reduceRight(joinWords, '')(words)).toEqual('bazbarfoo');
+      expect(_.reduceRight(joinWords)('', wordsObj)).toEqual('bazbarfoo');
+      expect(_.reduceRight(joinWords)('')(wordsObj)).toEqual('bazbarfoo');
+      expect(_.reduceRight(joinWords, '')(wordsObj)).toEqual('bazbarfoo');
+    });
+  });
+
+  xdescribe("find", function() {
+    var greaterThan2 = function(x) { return x > 2; };
+
+    it("is aliased as 'detect'", function() {
+      expect(_.find(greaterThan2, list)).toEqual(_.detect(greaterThan2, list));
+    });
+
+    it("returns the first value of a list that matches the conditional", function() {
+      expect(_.find(greaterThan2, list)).toEqual(3);
+    });
+
+    it("returns the first value of an object that matches the conditional", function() {
+      expect(_.find(greaterThan2, obj)).toEqual(3);
+    });
+
+    it("returns undefined if the value is not found", function() {
+      expect(_.find(greaterThan2, [0])).toEqual(undefined);
+    });
+
+    it("can be partially applied", function() {
+      expect(_.find(greaterThan2)(list)).toEqual(3);
+      expect(_.find(greaterThan2)(obj)).toEqual(3);
+    });
+  });
+
+  xdescribe("detect", function() {
+    var greaterThan2 = function(x) { return x > 2; };
+
+    it("is aliased as 'find'", function() {
+      expect(_.detect(greaterThan2, list)).toEqual(_.find(greaterThan2, list));
     });
   });
 
@@ -209,8 +296,13 @@ describe("Scoreunder", function() {
       expect(_.select(isEven, list)).toEqual([2,4]);
     });
 
+    it("returns a filtered list, from an object", function() {
+      expect(_.select(isEven, obj)).toEqual([2,4]);
+    });
+
     it("can be partially applied", function() {
       expect(_.select(isEven)(list)).toEqual([2,4]);
+      expect(_.select(isEven)(obj)).toEqual([2,4]);
     });
   });
 
@@ -221,6 +313,23 @@ describe("Scoreunder", function() {
 
     it("is aliased as 'select'", function() {
       expect(_.select(isEven, list)).toEqual(_.filter(isEven, list));
+    });
+  });
+
+  describe("reject", function() {
+    var isEven = function(n) { return !(n % 2); };
+
+    it("returns a list of values rejected from a list", function() {
+      expect(_.reject(isEven, list)).toEqual([1,3]);
+    });
+
+    it("returns a list of values rejected from an object", function() {
+      expect(_.reject(isEven, obj)).toEqual([1,3]);
+    });
+
+    it("can be partially applied", function() {
+      expect(_.reject(isEven)(list)).toEqual([1,3]);
+      expect(_.reject(isEven)(obj)).toEqual([1,3]);
     });
   });
 

@@ -13,27 +13,37 @@ if(typeof _ == "undefined") {
     , root = this
     
     , configuration = {
-        'each': {sig: ['function', '[object]', 'array|object']},
-        'forEach': {alias: 'each'},
-        'map' : {sig: ['function', '[object]', 'array|object']},
-        'collect': {alias: 'map'},
-        'reduce': {sig: ['function', 'd_', '[object]', 'array|object']},
-        'inject': {alias: 'reduce'},
-        'foldl': {alias: 'reduce'},
-        'reduceRight': {sig: ['function', 'd_', '[object]', 'array|object']},
-        'foldr': {alias: 'reduceRight'},
-        // 'find': {opt_context: true},
-        'select': {sig: ['function', '[object]', 'array|object']},
-        'filter': {alias: 'select'},
-        // 'reject': {opt_context: true},
+        'each': { sig: ['function', '[object]', 'array|object'] },
+        'forEach': { alias: 'each' },
+        'map' : { sig: ['function', '[object]', 'array|object'] },
+        'collect': { alias: 'map' },
+        'reduce': { sig: ['function', 'd_', '[object]', 'array|object'] },
+        'inject': { alias: 'reduce' },
+        'foldl': { alias: 'reduce' },
+        'reduceRight': { sig: ['function', 'd_', '[object]', 'array|object'] },
+        'foldr': { alias: 'reduceRight' },
+
+        // TODO: fix scoreunder to work with find()'s type sig.
+        // TODO: Enable specs for find() and detect().
+        'find': { sig: ['function', 'array|object'] },
+        'detect': { alias: 'find' },
+
+        'select': { sig: ['function', '[object]', 'array|object'] },
+        'filter': { alias: 'select' },
+        'reject': { sig: ['function', '[object]', 'array|object'] },
         // 'every': {opt_context: true},
         // 'some': {run_if_first_arg_is: 'array', opt_context: true},
         // 'invoke': {skip_flip: true, curry_length: 2},
         // 'max': {run_if_first_arg_is: 'array', opt_context: true},
         // 'min': {run_if_first_arg_is: 'array', opt_context: true},
         // 'sortBy': {opt_context: true},
-        // 'first': {run_if_first_arg_is: 'array', curry_length: 2},
-        'first': {sig: ['[number]', 'array']},
+        
+        // TODO: fix scoreunder to work with first()'s type sig.
+        // TODO: Enable specs for first(), head() and take().
+        //'first': { sig: ['[number]', 'array|object'] },
+        //'head': { alias: 'first' },
+        //'take': { alias: 'first' },
+        
         // 'initial' : {run_if_first_arg_is: 'array'},
         // 'last': {run_if_first_arg_is: 'array', curry_length: 2},
         // 'rest': {run_if_first_arg_is: 'array'},
@@ -137,11 +147,6 @@ if(typeof _ == "undefined") {
         var type = (arg instanceof Array) ? 'array' : (typeof arg)
           , type_is_optional = !!types[i].match(/\[/)
           , type_of_arg_is_type_of_main_arg = (main_arg.search(type) >= 0);
-        //TODO: remove if() and alerts once specs are passing
-        if (type === 'number' && type_is_optional) {
-          alert(type + " type is optional: " + type_is_optional);
-          alert(arg + " is the main arg: " + type_of_arg_is_type_of_main_arg);
-        }
         return type_is_optional && type_of_arg_is_type_of_main_arg;
       }
 
@@ -156,8 +161,6 @@ if(typeof _ == "undefined") {
             break;
           };
         }
-        // TODO: remove when all specs are passing
-        //alert("got all args except optionals: " + got_all);
         return got_all;
       }
 
@@ -179,15 +182,23 @@ if(typeof _ == "undefined") {
         return function() {  
           var args = curried_args.concat(toArray(arguments))
             , arg_len = args.length;
-          
           if (receivedAllArgs(arg_len, numArgs)) {
+            //TODO remove alerts and result var.
+            //alert("invoking function with all args, args = " + args);
+            //var result = f.apply(this, args);
+            //alert("result of applying args to function = " + result);
+            //return result;
             return f.apply(this, args);
           }
           
           if ((arg_len >= minimum_len) && receivedAllArgsExceptOptionals(types, args, main_arg)){
+            //TODO remove alert
+            //alert("invoking function without optional args, args = ", args);
             return f.apply(this, fillOptionalsAsNull(types, args));
           }
 
+          //TODO remove alert
+          //alert("calling typeCurry again, with args: " + args);
           return tc(f, types, args);
         }
       }
