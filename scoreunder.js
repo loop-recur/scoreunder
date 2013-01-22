@@ -15,26 +15,19 @@ if(typeof _ == "undefined") {
     , configuration = {
         'each': { sig: ['function', '[object]', 'array|object'] },
         'forEach': { alias: 'each' },
-        'map' : { sig: ['function', '[object]', 'array|object'] },
+        'map' : { sig: ['function', '[object]', 'array'] },
         'collect': { alias: 'map' },
-        'reduce': { sig: ['function', 'd_', '[object]', 'array|object'] },
+        'reduce': { sig: ['function', '_', '[object]', 'array|object'] },
         'inject': { alias: 'reduce' },
         'foldl': { alias: 'reduce' },
-        'reduceRight': { sig: ['function', 'd_', '[object]', 'array|object'] },
+        'reduceRight': { sig: ['function', '_', '[object]', 'array|object'] },
         'foldr': { alias: 'reduceRight' },
-
-        // TODO: fix scoreunder to work with find()'s type sig.
-        // TODO: Enable specs for find() and detect().
-        'find': { sig: ['function', 'array|object'] },
+        'find': { sig: ['function', '[object]', 'array|object'] },
         'detect': { alias: 'find' },
-
         'select': { sig: ['function', '[object]', 'array|object'] },
         'filter': { alias: 'select' },
         'reject': { sig: ['function', '[object]', 'array|object'] },
-
-        // TODO fix scoreunder to work with every()'s type sig.
-        // TODO enable specs for every() and all().
-        'every': { sig: ['function', 'array|object'] },
+        'every': { sig: ['function', '[object]', 'array|object'] },
         'all': { alias: 'every' },
 
         // 'some': {run_if_first_arg_is: 'array', opt_context: true},
@@ -45,7 +38,7 @@ if(typeof _ == "undefined") {
         
         // TODO: fix scoreunder to work with first()'s type sig.
         // TODO: Enable specs for first(), head() and take().
-        //'first': { sig: ['[number]', 'array|object'] },
+        //'first': { sig: ['[number]', 'array'] },
         //'head': { alias: 'first' },
         //'take': { alias: 'first' },
         
@@ -188,22 +181,13 @@ if(typeof _ == "undefined") {
           var args = curried_args.concat(toArray(arguments))
             , arg_len = args.length;
           if (receivedAllArgs(arg_len, numArgs)) {
-            //TODO remove alerts and result var.
-            //alert("invoking function with all args, args = " + args);
-            //var result = f.apply(this, args);
-            //alert("result of applying args to function = " + result);
-            //return result;
             return f.apply(this, args);
           }
           
           if ((arg_len >= minimum_len) && receivedAllArgsExceptOptionals(types, args, main_arg)){
-            //TODO remove alert
-            //alert("invoking function without optional args, args = ", args);
             return f.apply(this, fillOptionalsAsNull(types, args));
           }
 
-          //TODO remove alert
-          //alert("calling typeCurry again, with args: " + args);
           return tc(f, types, args);
         }
       }
