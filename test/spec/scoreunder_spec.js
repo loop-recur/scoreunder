@@ -76,7 +76,7 @@ describe("Scoreunder", function() {
     })
 
     it("is aliased as 'forEach'", function() {
-      _.forEach(sumWithContext, context, list);
+      _.forEach(sumWithContext, list, context);
       expect(total).toEqual(50);
       expect(index).toEqual(3);
     })
@@ -88,7 +88,7 @@ describe("Scoreunder", function() {
     });
 
     it("iterates over a list, with an optional context", function() {
-      _.each(sumWithContext, context, list);
+      _.each(sumWithContext, list, context);
       expect(total).toEqual(50)
       expect(index).toEqual(3);
     });
@@ -100,14 +100,14 @@ describe("Scoreunder", function() {
     });
 
     it("iterates over an object, with an optional context", function() {
-      _.each(sumObjWithContext, context, obj);
+      _.each(sumObjWithContext, obj, context);
       expect(total).toEqual(50);
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
     });
 
     it("iterates over an object, ignoring the object's prototype", function() {
       obj.constructor.prototype.five = 5
-      _.each(sumObjWithContext, context, obj);
+      _.each(sumObjWithContext, obj, context);
       expect(total).toEqual(50);
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
       delete obj.constructor.prototype.five;
@@ -125,7 +125,7 @@ describe("Scoreunder", function() {
     });
 
     it("can be partially applied", function() {
-      _.each(sumObjWithContext)(context, obj);
+      _.each(sumObjWithContext)(obj, context);
       expect(total).toEqual(50);
       expect(keys).toEqual(['one', 'two', 'three', 'four']);
     });
@@ -152,7 +152,7 @@ describe("Scoreunder", function() {
     });
 
     it("iterates over a list, with an optional context, and returns the new list", function() {
-      expect(_.map(multiply, context, list)).toEqual([5, 10, 15, 20]);
+      expect(_.map(multiply, list, context)).toEqual([5, 10, 15, 20]);
     });
 
     // TODO fix scoreunder to correctly handle obj as main_args with no optional context obj
@@ -161,7 +161,7 @@ describe("Scoreunder", function() {
     });
 
     it("iterates over an object, with an optional context, and returns a new list", function() {
-      expect(_.map(multiply, context, obj)).toEqual([5, 10, 15, 20]);
+      expect(_.map(multiply, obj, context)).toEqual([5, 10, 15, 20]);
     });
 
     // TODO fix scoreunder to correctly handle a null as the main_arg
@@ -171,7 +171,7 @@ describe("Scoreunder", function() {
 
     it("can be partially applied", function() {
       expect(_.map(addIndex)(list)).toEqual([1, 3, 5, 7]);
-      expect(_.map(multiply)(context, list)).toEqual([5,10,15,20]);
+      expect(_.map(multiply)(list, context)).toEqual([5,10,15,20]);
       // TODO fix scoreunder to correctly partially apply an optional context
       //expect(_.map(multiply)(context)(list)).toEqual([5,10,15,20]);
       //console.log("MAP");
@@ -203,7 +203,7 @@ describe("Scoreunder", function() {
     });
 
     it("returns the sum of an array, with an optional context", function() {
-      expect(_.reduce(sumWithContext, 0, context, list)).toEqual(50);
+      expect(_.reduce(sumWithContext, 0, list, context)).toEqual(50);
     });
 
     it("returns the sum of an object containing numbers", function() {
@@ -211,7 +211,7 @@ describe("Scoreunder", function() {
     });
 
     it("returns the sum of an object containing numbers, with an optional context", function() {
-      expect(_.reduce(sumWithContext, 0, context, obj)).toEqual(50);
+      expect(_.reduce(sumWithContext, 0, obj, context)).toEqual(50);
     });
 
     // TODO modify scoreunder to work with default initial values

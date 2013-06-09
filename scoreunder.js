@@ -1,6 +1,6 @@
 if(typeof _ == "undefined") {
   if(typeof require != "undefined") {
-    var _ = require('./underscore');
+    var _ = require('./lodash');
   } else {
     throw("This library depends on underscore");
   }
@@ -262,7 +262,7 @@ if(typeof _ == "undefined") {
       })()
     ;
 
-  for(key in _) { decorateScoreUnderObject(key) };
+  // for(key in _) { decorateScoreUnderObject(key) };
 
   if(typeof module !== 'undefined' && module.exports) {
     exports = module.exports = __;
