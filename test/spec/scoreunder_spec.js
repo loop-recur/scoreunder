@@ -4,6 +4,25 @@ describe("Scoreunder", function() {
     , context = { multiplier: 5 }
     ;
 
+  it("compacts the array", function() {
+    expect(_.compact([1, null, [3], null, 5])).toEqual([1, [3], 5]);
+  });
+
+  it("returns the difference", function() {
+    expect(_.difference([1, 2, 3, 4, 5], [5, 2, 10])).toEqual([1, 3, 4]);
+    expect(_.difference([1, 2, 3, 4, 5])([5, 2, 10], [1])).toEqual([3, 4]);
+  });
+
+  it("drops x amount", function() {
+    expect(_.drop(2, [1,2,3,4,5])).toEqual([3,4,5]);
+    expect(_.drop(2)([1,2,3,4,5])).toEqual([3,4,5]);
+  });
+
+  it("finds the index with a function", function() {
+    expect(_.findIndex(function(x){ return x < 0}, [1,-2,3])).toEqual(1);
+    expect(_.findIndex(function(x){ return x < 0})([1,-2,3])).toEqual(1);
+  });
+
   it("curries and flips filter", function() {
     var getEvens = _.filter(function(n){ return !(n % 2); });
     var result = getEvens(list);
