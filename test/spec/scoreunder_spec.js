@@ -23,6 +23,57 @@ describe("Scoreunder", function() {
     expect(_.findIndex(function(x){ return x < 0})([1,-2,3])).toEqual(1);
   });
 
+  it("returns the first element of a list", function() {
+    expect(_.first(list)).toEqual(1);
+  });
+
+  it("flattens a nested list", function() {
+    expect(_.flatten([1,2,[3]])).toEqual([1,2,3]);
+    expect(_.flatten([1,2,[[3]]])).toEqual([1,2,[3]]);
+  });
+
+  it("flattens a nested list deep", function() {
+    expect(_.flattenDeep([1,2,[[3]]])).toEqual([1,2,3]);
+  });
+
+  it("returns the elements index", function() {
+    expect(_.indexOf(4, list)).toEqual(3);
+    expect(_.indexOf(4)(list)).toEqual(3);
+    expect(_.indexOf(2, [1,2,3,4,2], 3)).toEqual(4);
+    expect(_.indexOf(5, [1,2,3,4,5], 3, true)).toEqual(4);
+  });
+
+  it("returns everything but the last or specified length", function() {
+    expect(_.initial([1, 2, 3])).toEqual([1, 2]);
+    expect(_.initial([1, 2, 3], 2)).toEqual([1]); //TODO shouldn't take 2 second
+  });
+
+  it("returns the similar elements", function() {
+    expect(_.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1])).toEqual([1, 2]);
+    expect(_.intersection([1, 2, 3])([101, 2, 1, 10], [2, 1])).toEqual([1, 2]);
+  });
+
+  it("returns the last element of a list", function() {
+    expect(_.last([1,2,3])).toEqual(3);
+  });
+
+  it("returns the last index of the found element in the list", function() {
+    expect(_.lastIndexOf(2, [1,2,3,2])).toEqual(3);
+    expect(_.lastIndexOf(2)([1,2,3,2])).toEqual(3);
+    expect(_.lastIndexOf(2, [1, 2, 3, 1, 2, 3], 3)).toEqual(1);
+  });
+
+  it("returns the last index of the found element in the list", function() {
+    expect(_.lastIndexOf(2, [1,2,3,2])).toEqual(3);
+    expect(_.lastIndexOf(2)([1,2,3,2])).toEqual(3);
+    expect(_.lastIndexOf(2, [1, 2, 3, 1, 2, 3], 3)).toEqual(1);
+  });
+
+  it("returns the first n elements of a list", function() {
+    expect(_.take(3, list)).toEqual([1,2,3]);
+    expect(_.take(3)(list)).toEqual([1,2,3]);
+  });
+
   it("curries and flips filter", function() {
     var getEvens = _.filter(function(n){ return !(n % 2); });
     var result = getEvens(list);
@@ -408,19 +459,4 @@ describe("Scoreunder", function() {
       expect(_.all(notAString, list)).toEqual(_.every(notAString, list));
     });
   });
-
-  xdescribe("first", function() {
-    it("returns the first element of a list", function() {
-      expect(_.first(list)).toEqual(1);
-    });
-
-    it("returns the first n elements of a list", function() {
-      expect(_.first(3, list)).toEqual([1,2,3]);
-    });
-    
-    it("can be partially applied", function() {
-      expect(_.first(3)(list)).toEqual([1,2,3]);
-    });
-  });
-
 });

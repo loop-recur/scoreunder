@@ -3477,26 +3477,15 @@
      * // => [{ 'name': 'apple', 'type': 'fruit' }, { 'name': 'banana', 'type': 'fruit' }]
      */
 
-    function first(array, callback, thisArg) {
-      if (array) {
-        var n = 0,
-            length = array.length;
-
-        if (typeof callback != 'number' && callback != null) {
-          var index = -1;
-          callback = lodash.createCallback(callback, thisArg);
-          while (++index < length && callback(array[index], index, array)) {
-            n++;
-          }
-        } else {
-          n = callback;
-          if (n == null || thisArg) {
-            return array[0];
-          }
-        }
-        return slice(array, 0, nativeMin(nativeMax(0, n), length));
-      }
+    function first(array) {
+    	if(array){
+    		return array[0];
+    	}
     }
+
+    var take = function take(n, array, callback) {
+    	return slice(array, 0, nativeMin(nativeMax(0, n), array.length));
+    }.autoCurry(2);
 
     /**
      * Flattens a nested array (the nesting can be to any depth). If `isShallow`
@@ -3516,7 +3505,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to flatten.
-     * @param {Boolean} [isShallow=false] A flag to indicate only flattening a single level.
+     * @param {Boolean} [isDeep=false] A flag to flatten past a single level.
      * @param {Function|Object|String} [callback=identity] The function called per
      *  iteration. If a property name or object is passed, it will be used to create
      *  a "_.pluck" or "_.where" style callback, respectively.
@@ -3524,10 +3513,10 @@
      * @returns {Array} Returns a new flattened array.
      * @example
      *
-     * _.flatten([1, [2], [3, [[4]]]]);
+     * _.flatten([1, [2], [3, [[4]]]], true);
      * // => [1, 2, 3, 4];
      *
-     * _.flatten([1, [2], [3, [[4]]]], true);
+     * _.flatten([1, [2], [3, [[4]]]]);
      * // => [1, 2, 3, [[4]]];
      *
      * var stooges = [
@@ -3539,25 +3528,40 @@
      * _.flatten(stooges, 'quotes');
      * // => ['Oh, a wise guy, eh?', 'Poifect!', 'Spread out!', 'You knucklehead!']
      */
-    var flatten = overloadWrapper(function flatten(array, isShallow, callback) {
+    var flatten = function flatten(array) {
       var index = -1,
           length = array ? array.length : 0,
           result = [];
 
       while (++index < length) {
         var value = array[index];
-        if (callback) {
-          value = callback(value, index, array);
-        }
-        // recursively flatten arrays (susceptible to call stack limits)
+  
         if (isArray(value)) {
-          push.apply(result, isShallow ? value : flatten(value));
+          push.apply(result, value);
         } else {
           result.push(value);
         }
       }
       return result;
-    });
+    };
+
+    var flattenDeep = function flattenDeep(array, callback) {
+      var index = -1,
+          length = array ? array.length : 0,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index];
+  
+        // recursively flatten arrays (susceptible to call stack limits)
+        if (isArray(value)) {
+          push.apply(result, flatten(value));
+        } else {
+          result.push(value);
+        }
+      }
+      return result;
+    };
 
     /**
      * Gets the index at which the first occurrence of `value` is found using
@@ -3650,7 +3654,7 @@
      * _.initial(food, { 'type': 'vegetable' });
      * // => [{ 'name': 'banana', 'type': 'fruit' }]
      */
-    var initial = function initial(callback, array, thisArg) {
+    var initial = function initial(array, callback, thisArg) {
       if (!array) {
         return [];
       }
@@ -3667,7 +3671,7 @@
         n = (callback == null || thisArg) ? 1 : callback || n;
       }
       return slice(array, 0, nativeMin(nativeMax(0, length - n), length));
-    }.autoCurry(2);
+    }.autoCurry(1);
 
     /**
      * Computes the intersection of all the passed-in arrays using strict equality
@@ -3684,7 +3688,7 @@
      * _.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1]);
      * // => [1, 2]
      */
-    function intersection(array) {
+    var intersection = function intersection(array, others) {
       var args = arguments,
           argsLength = args.length,
           argsIndex = -1,
@@ -3727,7 +3731,7 @@
       releaseArray(caches);
       releaseArray(seen);
       return result;
-    }
+    }.autoCurry();
 
     /**
      * Gets the last element of the `array`. If a number `n` is passed, the
@@ -3786,7 +3790,7 @@
      * _.last(food, { 'type': 'vegetable' });
      * // => [{ 'name': 'beet', 'type': 'vegetable' }, { 'name': 'carrot', 'type': 'vegetable' }]
      */
-    function last(array, callback, thisArg) {
+    var last = function last(array, callback, thisArg) {
       if (array) {
         var n = 0,
             length = array.length;
@@ -3957,7 +3961,6 @@
   }.autoCurry();
 
   var drop = function(n, array) {
-    console.log("slicing n", n, array)
     return slice(array, nativeMax(0, n));
   }.autoCurry();
 
@@ -5389,6 +5392,7 @@
     lodash.drop = drop;
     lodash.filter = filter;
     lodash.flatten = flatten;
+    lodash.flattenDeep = flattenDeep;
     lodash.forEach = forEach;
     lodash.forIn = forIn;
     lodash.forOwn = forOwn;
@@ -5417,6 +5421,7 @@
     lodash.shuffle = shuffle;
     lodash.sortBy = sortBy;
     lodash.tap = tap;
+    lodash.take = take;
     lodash.throttle = throttle;
     lodash.times = times;
     lodash.toArray = toArray;
@@ -5521,8 +5526,6 @@
     lodash.last = last;
 
     // add aliases
-    lodash.take = first;
-    lodash.head = first;
 
     forOwn(lodash, function(func, methodName) {
       if (!lodash.prototype[methodName]) {
