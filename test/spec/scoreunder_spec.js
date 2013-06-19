@@ -69,6 +69,17 @@ describe("Scoreunder", function() {
     expect(_.lastIndexOf(2, [1, 2, 3, 1, 2, 3], 3)).toEqual(1);
   });
 
+  it("returns the rest of a list", function() {
+    expect(_.rest([1,2,3,4])).toEqual([2,3,4]);
+    expect(_.rest([1])).toEqual([]);
+  });
+
+  it("returns the rest of a list by x", function() {
+    expect(_.restBy(2, [1,2,3,4])).toEqual([3,4]);
+    expect(_.restBy(2)([1,2,3,4])).toEqual([3,4]); // curried
+    expect(_.restBy(3,[1])).toEqual([]);
+  });
+
   it("returns the first n elements of a list", function() {
     expect(_.take(3, list)).toEqual([1,2,3]);
     expect(_.take(3)(list)).toEqual([1,2,3]);
