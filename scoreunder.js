@@ -3957,7 +3957,7 @@
   }
 
   var restBy = function(guard, array) {
-    return slice(array, 1);
+    return slice(array, guard);
   }.autoCurry();
 
   var drop = function(n, array) {
@@ -4052,20 +4052,17 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} [array1, array2, ...] Arrays to process.
+     * @param {Array} {Array} Arrays to process.
      * @returns {Array} Returns a new array of unique values, in order, that are
-     *  present in one or more of the arrays.
+     *  present in one or both of the arrays.
      * @example
      *
-     * _.union([1, 2, 3], [101, 2, 1, 10], [2, 1]);
-     * // => [1, 2, 3, 101, 10]
+     * _.union([1, 2, 3], [101, 2, 1, 10]);
+     * // => [101, 2, 1, 10, 3]
      */
-    function union(array) {
-      if (!isArray(array)) {
-        arguments[0] = array ? nativeSlice.call(array) : arrayRef;
-      }
-      return uniq(concat.apply(arrayRef, arguments));
-    }
+    var union = function(second, first) {
+      return uniq( first.concat( second ) );
+    }.autoCurry(2);
 
     /**
      * Creates a duplicate-value-free version of the `array` using strict equality
@@ -5418,6 +5415,7 @@
     lodash.range = range;
     lodash.reject = reject;
     lodash.rest = rest;
+    lodash.restBy = restBy;
     lodash.shuffle = shuffle;
     lodash.sortBy = sortBy;
     lodash.tap = tap;
