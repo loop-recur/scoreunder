@@ -525,7 +525,7 @@ var root
         ,result=init
         ;
       for(var i=len;--i>=0;) {
-        result = fn.apply(null,[sequence[i],result]);
+        result = fn.apply(null,[result, sequence[i]]);
       }
       return result;
     }.autoCurry()
