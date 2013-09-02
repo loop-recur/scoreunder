@@ -1550,7 +1550,7 @@
      * });
      * // => true
      */
-    function isEqual(a, b, callback, thisArg, stackA, stackB) {
+    var isEqual = function(a, b, callback, thisArg, stackA, stackB) {
       // used to indicate that when comparing objects, `a` has at least the properties of `b`
       var whereIndicator = callback === indicatorObject;
       if (typeof callback == 'function' && !whereIndicator) {
@@ -1706,7 +1706,7 @@
         releaseArray(stackB);
       }
       return result;
-    }
+    }.autoCurry(2)
 
     /**
      * Checks if `value` is, or can be coerced to, a finite number.
