@@ -123,6 +123,7 @@ describe("Scoreunder", function() {
       var isEven = function(n) { return !(n % 2); }
       expect(_.filter(isEven, list)).toEqual([2,4]);
       expect(_.filter(isEven)(list)).toEqual([2,4]);
+      expect(_.filter(_.isEqual)(1)).toEqual([1]);
     });
   });
 
