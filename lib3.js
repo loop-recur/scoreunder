@@ -305,6 +305,67 @@ var root
       return -1;
     }.autoCurry(2)
 
+        /**
+     * Iterates over an object's own enumerable properties, executing the `callback`
+     * for each property. The `callback` is bound to `thisArg` and invoked with three
+     * arguments; (value, key, object). Callbacks may exit iteration early by explicitly
+     * returning `false`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Objects
+     * @param {Object} object The object to iterate over.
+     * @param {Function} [callback=identity] The function called per iteration.
+     * @param {Mixed} [thisArg] The `this` binding of `callback`.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+     *   alert(key);
+     * });
+     * // => alerts '0', '1', and 'length' (order is not guaranteed)
+     */
+    , forOwn = function (callback, collection) {
+      var index, iterable = collection, result = iterable;
+      if (!iterable){return result;} 
+      var ownIndex = -1,
+          ownProps = Object.keys(iterable), //Object.keys is in ES5 
+          length = ownProps ? ownProps.length : 0;
+
+      while (++ownIndex < length) {
+        index = ownProps[ownIndex];
+        if (callback(iterable[index], index, collection) === false) return result;    
+      }
+      return result
+    }
+
+    , find = function(callback, collection) {
+        var index = -1,
+            length = collection ? collection.length : 0;
+        if (collection.find){
+          return collection.find(callback);
+        }
+
+        if (typeof length == 'number') {
+          while (++index < length) {
+            var value = collection[index];
+            if (callback(value, index, collection)) {
+              return value;
+            }
+          }
+        } else {
+          var result;
+          forOwn(function(value, index, collection) {
+            if (callback(value, index, collection)) {
+              result = value;
+              return false;
+            }
+          }, collection);
+          return result;
+        }
+    }.autoCurry(2)
+
    /**
     * Flattens a nested array (the nesting can be to any depth). If `isShallow`
     * is truthy, `array` will only be flattened a single level. If `callback`
@@ -510,6 +571,14 @@ var root
       return results;
     }.autoCurry(2)
 
+  , not = function( fn, x) {
+    return !fn(x);
+  }.autoCurry(2)
+
+  , reject = function( fn, x ) {
+     return filter(not(fn),x);
+  }
+
   , reduce = function(fn,init,sequence){
       var len = sequence.length
         , result = init
@@ -626,6 +695,11 @@ var root
       }
       return range;
     }.autoCurry(3)
+
+
+  , isEqual = function(a,b){
+      return a === b;
+  }.autoCurry(2)
   ;
 // ---------------------------------------
   
@@ -639,11 +713,13 @@ var root
   lib3.map = map;
   lib3.compose = compose;
   lib3.filter = filter;
+  lib3.reject = reject;
   lib3.reduce = reduce;
   lib3.reduceRight = reduceRight;
   lib3.pluck = pluck;
   lib3.sortBy = sortBy;
   lib3.first = first;
+  lib3.find = find;
   lib3.take = take;
   lib3.last = last;
   lib3.initial = initial;
@@ -653,6 +729,7 @@ var root
   lib3.min = min;
   lib3.range = range;
   lib3.rangeStep = rangeStep;
+  lib3.isEqual = isEqual;
 
   lib3.expose = function(){ xmod.expose(window, lib3) };
   xmod.exportModule('lib3', lib3, global_module, global_exports);

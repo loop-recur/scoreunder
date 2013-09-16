@@ -9,31 +9,6 @@ describe("Scoreunder", function() {
     expect(window.map).toBeUndefined();
   });
 
-  describe("expose", function() {
-    var add2 = function(x) { return x + 2; }
-      , cleanup = function() {
-          for (f in _) {
-            if (_.hasOwnProperty(f)) { 
-              delete window[f];
-            }
-          }
-        }
-      ;
-
-    beforeEach(_.expose);
-    afterEach(cleanup);
-
-    it("exposes all functions to the global namespace", function() {
-      expect(map).toBeDefined();
-      expect(window.map).toBeDefined();
-      expect(map(add2, list)).toEqual([3, 4, 5, 6]);
-    });
-
-    it("omits designated functions from exposure", function() {
-      expect(window.expose).toBeUndefined();
-    });
-  });
-
   describe("Array", function(){
 
     it("[compact] removes nulls from the array", function() {
