@@ -626,6 +626,11 @@ var root
       }
       return range;
     }.autoCurry(3)
+
+
+  , isEqual = function(a,b){
+      return a === b;
+  }.autoCurry(2)
   ;
 // ---------------------------------------
   
@@ -653,7 +658,8 @@ var root
   lib3.min = min;
   lib3.range = range;
   lib3.rangeStep = rangeStep;
-
+  lib3.isEqual = isEqual;
+  
   lib3.expose = function(){ xmod.expose(window, lib3) };
   xmod.exportModule('lib3', lib3, global_module, global_exports);
 
