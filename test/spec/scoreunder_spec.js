@@ -127,12 +127,12 @@ describe("Scoreunder", function() {
     });
   });
 
-  xdescribe("find", function() {
+  describe("find", function() {
     var greaterThan2 = function(x) { return x > 2; };
 
-    it("is aliased as 'detect'", function() {
+    /*it("is aliased as 'detect'", function() {
       expect(_.find(greaterThan2, list)).toEqual(_.detect(greaterThan2, list));
-    });
+    });*/
 
     it("returns the first value of a list that matches the conditional", function() {
       expect(_.find(greaterThan2, list)).toEqual(3);
