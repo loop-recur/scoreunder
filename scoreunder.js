@@ -153,10 +153,10 @@
         numArgs = numArgs || fn.length;
         var f = function () {
           if (arguments.length < numArgs) {
-            return numArgs - arguments.length > 0 ?
-              autoCurry(curry.apply(this, [fn].concat(toArray(arguments))),
-              numArgs - arguments.length) :
-              curry.apply(this, [fn].concat(toArray(arguments)));
+            return autoCurry(
+	      curry.apply(this, [fn].concat(toArray(arguments))),
+	      numArgs - arguments.length
+	    );
           } else {
             return fn.apply(this, arguments);
           }
